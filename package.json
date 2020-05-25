@@ -1,0 +1,12 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "sass assets/scss/site.scss public/css/site.css -s compressed --no-source-map",
+    "watch": "npm run build -- --watch"
+  },
+  "devDependencies": {
+    "sass": "^1.26.5",
+    "uikit": "^3.4.2"
+  }
+}

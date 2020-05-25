@@ -1,0 +1,5 @@
+.idea
+node_modules
+config.ini
+pnpm-lock.yaml
+prepros.config

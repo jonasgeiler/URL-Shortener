@@ -1,0 +1,243 @@
+<?php
+
+
+class Link {
+	private static function checkID ($id) {
+		if (in_array($id, Flight::get('shortener.reserved_ids')))
+			return true;
+
+		$result = Flight::db()->select('srt_links', 'id', [
+			'id' => $id,
+		]);
+
+		if (count($result) > 0)
+			return true;
+
+		return false;
+	}
+
+	private static function generateID () {
+		do {
+			$id = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, Flight::get('shortener.id_length'));
+		} while (self::checkID($id));
+
+		return $id;
+	}
+
+	public static function checkDeleteKey ($deleteKey) {
+		$result = Flight::db()->select('srt_links', 'delete_key', [
+			'delete_key' => $deleteKey,
+		]);
+
+		if (count($result) > 0)
+			return true;
+
+		return false;
+	}
+
+	private static function generateDeleteKey () {
+		do {
+			$deleteKey = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, Flight::get('shortener.delete_key_length'));
+		} while (self::checkDeleteKey($deleteKey));
+
+		return $deleteKey;
+	}
+
+
+	public static function shorten ($link, $customID = false, $expireHours = 0) {
+		$expireDate = '2038-01-19 04:14:07';
+
+		if ($expireHours !== 0) {
+			$expireTimestamp = time() + (60 * 60 * $expireHours);
+			$expireDate = date('Y-m-d H:i:s', $expireTimestamp);
+		}
+
+		if (!$customID) {
+			$id = self::generateID();
+		} else {
+			if (!self::checkID($customID)) {
+				$id = $customID;
+			} else {
+				return ['success' => false, 'error' => 'Custom ID already exists or is reserved! Please choose another one!'];
+			}
+		}
+
+		$deleteKey = self::generateDeleteKey();
+
+		Flight::db()->insert('srt_links', [
+			'id'         => $id,
+			'link'       => $link,
+			'expires'    => $expireDate,
+			'delete_key' => $deleteKey,
+		]);
+
+		return ['success' => true, 'id' => $id, 'deleteKey' => $deleteKey];
+	}
+
+	public static function delete ($deleteKey) {
+		if (!self::checkDeleteKey($deleteKey))
+			return ['success' => false, 'error' => 'Delete Key doesn\'t exist!'];
+
+		$result = Flight::db()->select('srt_links', 'id', [
+			'delete_key' => $deleteKey,
+		]);
+
+		$id = false;
+		if (count($result) > 0)
+			$id = $result[0];
+
+		Flight::db()->delete('srt_links', [
+			'delete_key' => $deleteKey,
+		]);
+
+		if ($id) {
+			Flight::db()->delete('srt_clicks', [
+				'id' => $id,
+			]);
+		}
+
+		return ['success' => true];
+	}
+
+	public static function report ($id) {
+		if (!self::checkID($id))
+			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
+
+		Flight::db()->update('srt_links', [
+			'reported' => 1,
+		], [
+			'id' => $id,
+		]);
+
+		return ['success' => true];
+	}
+
+	public static function getRedirectLink ($id) {
+		if (!self::checkID($id))
+			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
+
+		$result = Flight::db()->select('srt_links', [
+			'link',
+			'expires',
+			'created',
+		], [
+			'id' => $id,
+		]);
+
+		if (count($result) > 0) {
+			$row = $result[0];
+
+			return ['success' => true, 'link' => $row['link'], 'created' => $row['created']];
+		}
+
+		return ['success' => false, 'error' => 'A database error occurred! Please try again later.'];
+	}
+
+	public static function count () {
+		return Flight::db()->count('srt_links');
+	}
+
+	public static function recordClick ($id) {
+		Flight::db()->insert('srt_clicks', [
+			'id' => $id,
+		]);
+
+		return ['success' => true];
+	}
+
+	// TODO: If younger than 3 months, days stats, else month stats
+	public static function getClickStats ($id) {
+		if (!self::checkID($id)) {
+			return [
+				'totalClicks'    => 0,
+				'clicksOverTime' => [],
+			];
+		}
+
+		$result = Flight::db()->select('srt_clicks', 'date', [
+			'id' => $id,
+		]);
+
+		if (count($result) > 0) {
+			$timestamps = [];
+			foreach ($result as $date) {
+				$timestamps[] = strtotime($date);
+			}
+
+			sort($timestamps);
+
+			$totalClicks = 0;
+			$clicksOverTime = [];
+			foreach ($timestamps as $timestamp) {
+				$month = date('F Y', $timestamp);
+
+				$foundMonth = false;
+				foreach ($clicksOverTime as $index => $click) {
+					if ($click['month'] === $month) {
+						$foundMonth = true;
+						$clicksOverTime[$index]['clicks']++;
+						$totalClicks++;
+					}
+				}
+
+				if (!$foundMonth) {
+					$clicksOverTime[] = [
+						'month'  => $month,
+						'clicks' => 1,
+					];
+					$totalClicks++;
+				}
+			}
+
+			return [
+				'totalClicks'    => $totalClicks,
+				'clicksOverTime' => $clicksOverTime,
+			];
+		}
+
+		return [
+			'totalClicks'    => 0,
+			'clicksOverTime' => [],
+		];
+	}
+
+	public static function getReportedLinks () {
+		return Flight::db()->select('srt_links', [
+			'id',
+			'link',
+			'expires',
+			'created',
+		], [
+			'reported' => 1,
+		]);
+	}
+
+	public static function approveReportedLink ($id) {
+		if (!self::checkID($id))
+			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
+
+		Flight::db()->update('srt_links', [
+			'reported' => 0,
+		], [
+			'id' => $id,
+		]);
+
+		return ['success' => true];
+	}
+
+	public static function deleteReportedLink ($id) {
+		if (!self::checkID($id))
+			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
+
+
+		$result = Flight::db()->select('srt_links', 'delete_key', [
+			'id' => $id,
+		]);
+
+		if (count($result) > 0) {
+			$deleteKey = $result[0];
+
+			return self::delete($deleteKey);
+		}
+	}
+}

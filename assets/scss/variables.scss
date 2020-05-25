@@ -1,0 +1,26 @@
+@import '../../node_modules/uikit/src/scss/variables-theme.scss';
+
+/* LABEL COLOR */
+$inverse-form-label-color: rgba(255,255,255,0.7);
+/* */
+
+/* SECONDARY BUTTON TO WARNING BUTTON */
+$button-secondary-background: #faa05a;
+$inverse-button-secondary-background: $button-secondary-background;
+
+$button-secondary-active-background: darken($button-secondary-background, 5%);
+$inverse-button-secondary-active-background: $button-secondary-active-background;
+
+$button-secondary-hover-background: darken($button-secondary-background, 10%);
+$inverse-button-secondary-hover-background: $button-secondary-hover-background;
+
+
+$button-secondary-color: $button-danger-color;
+$inverse-button-secondary-color: $button-secondary-color;
+
+$button-secondary-active-color: $button-danger-active-color;
+$inverse-button-secondary-active-color: $button-secondary-active-color;
+
+$button-secondary-hover-color: $button-danger-hover-color;
+$inverse-button-secondary-hover-color: $button-secondary-hover-color;
+/* */
