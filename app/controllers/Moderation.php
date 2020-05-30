@@ -8,6 +8,8 @@ class Moderation {
 		if (!Flight::auth()->isAdmin)
 			Flight::redirect('/', 302);
 
+		Install::tryInstall();
+
 		Flight::csrf()->regenerateToken();
 
 		Flight::view()->set('titlePostfix', 'Moderation');
