@@ -24,10 +24,10 @@ class Stats {
 		} else {
 			$dom = new DOMDocument();
 
-			$rawHTML = file_get_contents($redirectLink);
+			$rawHTML = @file_get_contents($redirectLink);
 
 			libxml_use_internal_errors(true);
-			if ($rawHTML !== '' && $dom->loadHTML($rawHTML)) {
+			if (!empty($rawHTML) && $dom->loadHTML($rawHTML)) {
 				$titles = $dom->getElementsByTagName('title');
 				if ($titles->length > 0) {
 					$title = $titles->item(0)->textContent;
