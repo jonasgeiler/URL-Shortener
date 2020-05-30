@@ -5,11 +5,9 @@ class Cron {
 	public static function removeExpired() {
 		Flight::auth()->requireAuth();
 
-		$result = Flight::db()->delete('srt_links', [
-			'expires[<]' => DB::raw('NOW()')
-		]);
+		$response = Link::removeExpired();
 
-		echo 'DONE! AFFECTED ' . $result->rowCount() . ' ROWS.';
+		echo 'DONE! AFFECTED ' . $response['affectedRows'] . ' ROWS.';
 	}
 
 	public static function updateBackgroundImages() {

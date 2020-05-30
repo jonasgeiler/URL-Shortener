@@ -2,11 +2,19 @@
 
 
 class Link {
+	private static function tableClicks() {
+		return (Flight::has('shortener.db_prefix') ? Flight::get('shortener.db_prefix') : '') . 'clicks'; 
+	}
+
+	private static function tableLinks() {
+		return (Flight::has('shortener.db_prefix') ? Flight::get('shortener.db_prefix') : '') . 'links';
+	}
+	
 	private static function checkID ($id) {
 		if (in_array($id, Flight::get('shortener.reserved_ids')))
 			return true;
 
-		$result = Flight::db()->select('srt_links', 'id', [
+		$result = Flight::db()->select(self::tableLinks(), 'id', [
 			'id' => $id,
 		]);
 
@@ -25,7 +33,7 @@ class Link {
 	}
 
 	public static function checkDeleteKey ($deleteKey) {
-		$result = Flight::db()->select('srt_links', 'delete_key', [
+		$result = Flight::db()->select(self::tableLinks(), 'delete_key', [
 			'delete_key' => $deleteKey,
 		]);
 
@@ -64,7 +72,7 @@ class Link {
 
 		$deleteKey = self::generateDeleteKey();
 
-		Flight::db()->insert('srt_links', [
+		Flight::db()->insert(self::tableLinks(), [
 			'id'         => $id,
 			'link'       => $link,
 			'expires'    => $expireDate,
@@ -78,7 +86,7 @@ class Link {
 		if (!self::checkDeleteKey($deleteKey))
 			return ['success' => false, 'error' => 'Delete Key doesn\'t exist!'];
 
-		$result = Flight::db()->select('srt_links', 'id', [
+		$result = Flight::db()->select(self::tableLinks(), 'id', [
 			'delete_key' => $deleteKey,
 		]);
 
@@ -86,12 +94,12 @@ class Link {
 		if (count($result) > 0)
 			$id = $result[0];
 
-		Flight::db()->delete('srt_links', [
+		Flight::db()->delete(self::tableLinks(), [
 			'delete_key' => $deleteKey,
 		]);
 
 		if ($id) {
-			Flight::db()->delete('srt_clicks', [
+			Flight::db()->delete(self::tableClicks(), [
 				'id' => $id,
 			]);
 		}
@@ -103,7 +111,7 @@ class Link {
 		if (!self::checkID($id))
 			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
 
-		Flight::db()->update('srt_links', [
+		Flight::db()->update(self::tableLinks(), [
 			'reported' => 1,
 		], [
 			'id' => $id,
@@ -116,7 +124,7 @@ class Link {
 		if (!self::checkID($id))
 			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
 
-		$result = Flight::db()->select('srt_links', [
+		$result = Flight::db()->select(self::tableLinks(), [
 			'link',
 			'expires',
 			'created',
@@ -134,11 +142,11 @@ class Link {
 	}
 
 	public static function count () {
-		return Flight::db()->count('srt_links');
+		return Flight::db()->count(self::tableLinks());
 	}
 
 	public static function recordClick ($id) {
-		Flight::db()->insert('srt_clicks', [
+		Flight::db()->insert(self::tableClicks(), [
 			'id' => $id,
 		]);
 
@@ -154,7 +162,7 @@ class Link {
 			];
 		}
 
-		$result = Flight::db()->select('srt_clicks', 'date', [
+		$result = Flight::db()->select(self::tableClicks(), 'date', [
 			'id' => $id,
 		]);
 
@@ -202,7 +210,7 @@ class Link {
 	}
 
 	public static function getReportedLinks () {
-		return Flight::db()->select('srt_links', [
+		return Flight::db()->select(self::tableLinks(), [
 			'id',
 			'link',
 			'expires',
@@ -216,7 +224,7 @@ class Link {
 		if (!self::checkID($id))
 			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
 
-		Flight::db()->update('srt_links', [
+		Flight::db()->update(self::tableLinks(), [
 			'reported' => 0,
 		], [
 			'id' => $id,
@@ -230,7 +238,7 @@ class Link {
 			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
 
 
-		$result = Flight::db()->select('srt_links', 'delete_key', [
+		$result = Flight::db()->select(self::tableLinks(), 'delete_key', [
 			'id' => $id,
 		]);
 
@@ -239,5 +247,13 @@ class Link {
 
 			return self::delete($deleteKey);
 		}
+	}
+
+	public static function removeExpired() {
+		$result = Flight::db()->delete(self::tableLinks(), [
+			'expires[<]' => Flight::dbRaw('NOW()')
+		]);
+
+		return ['success' => true, 'affectedRows' => $result->rowCount()];
 	}
 }
