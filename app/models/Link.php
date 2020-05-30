@@ -243,10 +243,10 @@ class Link {
 		]);
 
 		if (count($result) > 0) {
-			$deleteKey = $result[0];
-
-			return self::delete($deleteKey);
+			return self::delete($result[0]);
 		}
+
+		return ['success' => false];
 	}
 
 	public static function removeExpired() {
@@ -255,5 +255,32 @@ class Link {
 		]);
 
 		return ['success' => true, 'affectedRows' => $result->rowCount()];
+	}
+
+	public static function getTitle($id) {
+		if (!self::checkID($id))
+			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
+
+		$result = Flight::db()->select(self::tableLinks(), 'title', [
+			'id' => $id,
+		]);
+
+		if (count($result) > 0)
+			return ['success' => true, 'title' => $result[0]];
+
+		return ['success' => false];
+	}
+
+	public static function setTitle($id, $title) {
+		if (!self::checkID($id))
+			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
+
+		Flight::db()->update(self::tableLinks(), [
+			'title' => $title,
+		], [
+			'id' => $id,
+		]);
+
+		return ['success' => true];
 	}
 }

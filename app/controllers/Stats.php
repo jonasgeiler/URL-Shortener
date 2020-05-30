@@ -13,22 +13,32 @@ class Stats {
 
 		$createdTime = date('M j, Y \a\t H:i', strtotime($response['created']));
 
-		$dom = new DOMDocument();
-
-		$rawHTML = file_get_contents($redirectLink);
-
 		$gotTitle = false;
-		libxml_use_internal_errors(true);
-		if($rawHTML !== '' && $dom->loadHTML($rawHTML)) {
-			$titles = $dom->getElementsByTagName('title');
-			if ($titles->length > 0) {
-				$title = $titles->item(0)->textContent;
-				$gotTitle = true;
+		$response = Link::getTitle($id);
+
+		$success = $response['success'];
+
+		if ($success && !empty($response['title'])) {
+			$title = $response['title'];
+			$gotTitle = true;
+		} else {
+			$dom = new DOMDocument();
+
+			$rawHTML = file_get_contents($redirectLink);
+
+			libxml_use_internal_errors(true);
+			if ($rawHTML !== '' && $dom->loadHTML($rawHTML)) {
+				$titles = $dom->getElementsByTagName('title');
+				if ($titles->length > 0) {
+					$title = $titles->item(0)->textContent;
+					Link::setTitle($id, $title);
+					$gotTitle = true;
+				} else {
+					$title = $redirectLink;
+				}
 			} else {
 				$title = $redirectLink;
 			}
-		} else {
-			$title = $redirectLink;
 		}
 
 		$stats = Link::getClickStats($id);
@@ -63,8 +73,8 @@ class Stats {
 		}
 
 		return [
-			'count' => array_sum(array_values($shares)),
-			'tooltip' => $tooltip
+			'count'   => array_sum(array_values($shares)),
+			'tooltip' => $tooltip,
 		];
 	}
 

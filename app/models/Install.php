@@ -52,8 +52,12 @@ class Install {
 				'NOT NULL',
 				'DEFAULT CURRENT_TIMESTAMP'
 			],
-			'UNIQUE INDEX <id> (<id>)',
-			'UNIQUE INDEX <delete_key> (<delete_key>)',
+			'title' => [
+				'VARCHAR(255)',
+				'NULL'
+			],
+			Flight::get('cockpit.db')['database_type'] == 'sqlite' ? 'UNIQUE(<id>)' : 'UNIQUE INDEX <id> (<id>)',
+			Flight::get('cockpit.db')['database_type'] == 'sqlite' ? 'UNIQUE(<delete_key>)' : 'UNIQUE INDEX <delete_key> (<delete_key>)',
 		]);
 	}
 
