@@ -53,7 +53,7 @@ class Link {
 
 
 	public static function shorten ($link, $customID = false, $expireHours = 0) {
-		$expireDate = '2038-01-19 04:14:07';
+		$expireDate = '2038-01-01 00:00:00';
 
 		if ($expireHours !== 0) {
 			$expireTimestamp = time() + (60 * 60 * $expireHours);
@@ -251,7 +251,7 @@ class Link {
 
 	public static function removeExpired() {
 		$result = Flight::db()->delete(self::tableLinks(), [
-			'expires[<]' => Flight::dbRaw('NOW()')
+			'expires[<]' => Flight::dbRaw(Flight::get('cockpit.db')['database_type'] == 'sqlite' ? "datetime('now', 'localtime')" : 'NOW()')
 		]);
 
 		return ['success' => true, 'affectedRows' => $result->rowCount()];
