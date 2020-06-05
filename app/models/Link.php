@@ -275,6 +275,9 @@ class Link {
 		if (!self::checkID($id))
 			return ['success' => false, 'error' => 'ID doesn\'t exist!'];
 
+		if (strlen($title) > 255)
+			$title = trim(substr($title, 0, 252)) . '...';
+
 		Flight::db()->update(self::tableLinks(), [
 			'title' => $title,
 		], [

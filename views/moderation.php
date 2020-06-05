@@ -1,4 +1,4 @@
-<?php $this->layout('layouts/default', ['fullWidth' => true]) ?>
+<?php $this->layout('layouts/default', ['largeWidth' => true]) ?>
 
 <?php $this->block('content') ?>
 <div class="uk-text-center uk-margin">

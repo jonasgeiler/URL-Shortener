@@ -17,7 +17,7 @@
 	<body class="login uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" uk-height-viewport>
 		<div class="uk-position-cover uk-overlay-primary"></div>
 
-		<div class="<?= isset($fullWidth) && $fullWidth ? '' : 'uk-width-large' ?> uk-padding-small uk-position-z-index" uk-scrollspy="cls: uk-animation-fade">
+		<div class="<?= isset($largeWidth) && $largeWidth ? 'uk-width-xxlarge' : 'uk-width-large' ?> uk-padding-small uk-position-z-index uk-animation-fade">
 			<?php $this->yield('content') ?>
 		</div>
 
