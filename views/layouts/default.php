@@ -25,5 +25,6 @@
 		<script src="https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit-icons.min.js"></script>
 		<?php $this->yield('scripts') ?>
+		<script async src="https://analytics.skayo.dev/ackee.js" data-ackee-server="https://analytics.skayo.dev" data-ackee-domain-id="7061976c-3081-46c6-9722-e1c5a44289fc"></script>
 	</body>
 </html>
