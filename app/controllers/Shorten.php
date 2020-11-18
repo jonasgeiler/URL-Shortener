@@ -5,7 +5,7 @@ class Shorten {
 	public static function page () {
 		Flight::csrf()->regenerateToken();
 
-		Flight::view()->set('titlePostfix', 'Homepage');
+		Flight::view()->set('titlePrefix', 'Homepage');
 
 		Flight::render('shorten');
 	}
@@ -41,7 +41,7 @@ class Shorten {
 			$success = $response['success'];
 
 			if ($success) {
-				Flight::view()->set('titlePostfix', 'Your Shortened Link');
+				Flight::view()->set('titlePrefix', 'Your Shortened Link');
 				Flight::view()->set('id', $response['id']);
 				Flight::view()->set('deleteKey', $response['deleteKey']);
 				Flight::view()->set('link', $link);

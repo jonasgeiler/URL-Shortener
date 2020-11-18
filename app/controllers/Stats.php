@@ -43,7 +43,7 @@ class Stats {
 
 		$stats = Link::getClickStats($id);
 
-		Flight::view()->set('titlePostfix', 'Link Statistics');
+		Flight::view()->set('titlePrefix', 'Link Statistics');
 		Flight::view()->set('link', $redirectLink);
 		Flight::view()->set('createdTime', $createdTime);
 		Flight::view()->set('linkTitle', $title);

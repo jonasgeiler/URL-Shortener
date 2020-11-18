@@ -5,7 +5,7 @@ class Delete {
 	public static function page() {
 		Flight::csrf()->regenerateToken();
 
-		Flight::view()->set('titlePostfix', 'Delete Link');
+		Flight::view()->set('titlePrefix', 'Delete Link');
 
 		Flight::render('delete');
 	}
@@ -33,7 +33,7 @@ class Delete {
 			$success = $response['success'];
 
 			if ($success) {
-				Flight::view()->set('titlePostfix', 'Link Deleted');
+				Flight::view()->set('titlePrefix', 'Link Deleted');
 
 				return Flight::render('success/delete');
 			} else {

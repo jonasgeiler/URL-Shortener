@@ -9,7 +9,7 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
 		<link rel="manifest" href="/site.webmanifest">
 
-		<title>URL-Shortener | <?= $titlePostfix ?></title>
+		<title><?= $titlePrefix ?> | URL-Shortener, by Skayo</title>
 
 		<link rel="stylesheet" href="/css/site.css">
 		<link rel="stylesheet" href="/css/background.css">

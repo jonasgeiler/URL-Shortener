@@ -5,7 +5,7 @@ class Report {
 	public static function page() {
 		Flight::csrf()->regenerateToken();
 
-		Flight::view()->set('titlePostfix', 'Report Link');
+		Flight::view()->set('titlePrefix', 'Report Link');
 
 		Flight::render('report');
 	}
@@ -27,7 +27,7 @@ class Report {
 			$success = $response['success'];
 
 			if ($success) {
-				Flight::view()->set('titlePostfix', 'Link Reported');
+				Flight::view()->set('titlePrefix', 'Link Reported');
 
 				return Flight::render('success/report');
 			} else {

@@ -21,6 +21,6 @@ Flight::route('/@id/stats', 'Stats::page');
 Flight::route('POST /api/shorten', 'Shorten::api');
 
 Flight::map('notFound', function () {
-	Flight::view()->set('titlePostfix', 'Not Found');
+	Flight::view()->set('titlePrefix', 'Not Found');
 	Flight::render('404');
 });

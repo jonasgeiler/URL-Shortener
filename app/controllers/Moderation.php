@@ -12,7 +12,7 @@ class Moderation {
 
 		Flight::csrf()->regenerateToken();
 
-		Flight::view()->set('titlePostfix', 'Moderation');
+		Flight::view()->set('titlePrefix', 'Moderation');
 		Flight::view()->set('reportedLinks', Link::getReportedLinks());
 		Flight::view()->set('linksCreated', Link::count());
 
