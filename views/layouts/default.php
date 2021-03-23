@@ -13,6 +13,8 @@
 
 		<link rel="stylesheet" href="/css/site.css">
 		<link rel="stylesheet" href="/css/background.css">
+
+		<script async defer data-domain="l.skayo.dev" src="https://analytics.skayo.dev/js/plausible.js"></script>
 	</head>
 	<body class="login uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" uk-height-viewport>
 		<div class="uk-position-cover uk-overlay-primary"></div>
@@ -25,6 +27,5 @@
 		<script src="https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit-icons.min.js"></script>
 		<?php $this->yield('scripts') ?>
-		<script async src="https://analytics.skayo.dev/ackee.js" data-ackee-server="https://analytics.skayo.dev" data-ackee-domain-id="ddf0ddc1-3c67-4246-be96-9455396262f8"></script>
 	</body>
 </html>
