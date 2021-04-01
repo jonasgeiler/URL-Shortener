@@ -60,12 +60,12 @@ class Stats {
 
 		$shares = [];
 
-		$shares['Facebook'] = self::getFacebookShares($url);
+		$sharedCountData = self::getSharedCountData($url);
+		$shares['Facebook'] = $sharedCountData['Facebook']['share_count'];
+		$shares['Pinterest'] = $sharedCountData['Pinterest'];
 		$shares['Reddit'] = self::getRedditShares($url);
-		$shares['Pinterest'] = self::getPinterestShares($url);
 		$shares['VK'] = self::getVkShares($url);
 		$shares['Odnoklassniki'] = self::getOdnoklassnikiShares($url);
-		$shares['AddThis'] = self::getAddThisShares($url);
 
 		$tooltip = '';
 		foreach ($shares as $site => $shareCount) {
@@ -78,25 +78,11 @@ class Stats {
 		];
 	}
 
-	private static function getPinterestShares ($url) {
-		$jsonp = file_get_contents('https://widgets.pinterest.com/v1/urls/count.json?url=' . urlencode($url));
-
-		if ($jsonp[0] !== '[' && $jsonp[0] !== '{') {
-			$jsonp = substr($jsonp, strpos($jsonp, '('));
-		}
-
-		$jsonp = trim($jsonp); // remove trailing newlines
-		$jsonp = trim($jsonp, '()'); // remove leading and trailing parenthesis
-
-		$data = json_decode($jsonp, true);
-
-		return $data['count'];
-	}
-
-	private static function getFacebookShares ($url) {
-		$data = json_decode(file_get_contents('https://graph.facebook.com/?fields=og_object%7Bengagement%7D&id=' . urlencode($url)), true);
-
-		return isset($data['og_object']) ? $data['og_object']['engagement']['count'] : 0;
+	private static function getSharedCountData ($url) {
+		return json_decode(
+			file_get_contents('https://api.sharedcount.com/v1.0/?url=' . urlencode($url) . '&apikey=' . Flight::get('sharedcount.api_key')),
+			true
+		);
 	}
 
 	private static function getRedditShares ($url) {
@@ -135,11 +121,5 @@ class Stats {
 		$jsonp = trim($jsonp, '()'); // remove leading and trailing parenthesis
 
 		return (int) trim(explode(',', $jsonp)[1], "'");
-	}
-
-	private static function getAddThisShares ($url) {
-		$data = json_decode(file_get_contents('https://api-public.addthis.com/url/shares.json?url=' . urlencode($url)), true);
-
-		return $data['shares'];
 	}
 }
