@@ -7,12 +7,16 @@
 		<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-		<link rel="manifest" href="/site.webmanifest">
+		<link rel="manifest" href="/manifest.json">
 
 		<title><?= $titlePrefix ?> | URL-Shortener, by Skayo</title>
 
 		<link rel="stylesheet" href="/css/site.css">
 		<link rel="stylesheet" href="/css/background.css">
+
+		<script defer src="/js/uikit.min.js"></script>
+		<script defer src="/js/uikit-icons.min.js"></script>
+		<?php $this->yield('scripts') ?>
 
 		<script async defer data-domain="l.skayo.dev" src="https://analytics.skayo.dev/js/plausible.js"></script>
 	</head>
@@ -22,10 +26,5 @@
 		<div class="<?= isset($largeWidth) && $largeWidth ? 'uk-width-xxlarge' : 'uk-width-large' ?> uk-padding-small uk-position-z-index uk-animation-fade">
 			<?php $this->yield('content') ?>
 		</div>
-
-
-		<script src="https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit-icons.min.js"></script>
-		<?php $this->yield('scripts') ?>
 	</body>
 </html>

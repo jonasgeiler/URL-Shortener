@@ -41,15 +41,12 @@ class Stats {
 			}
 		}
 
-		$stats = Link::getClickStats($id);
-
 		Flight::view()->set('titlePrefix', 'Link Statistics');
 		Flight::view()->set('link', $redirectLink);
 		Flight::view()->set('createdTime', $createdTime);
 		Flight::view()->set('linkTitle', $title);
 		Flight::view()->set('gotTitle', $gotTitle);
-		Flight::view()->set('totalClicks', $stats['totalClicks']);
-		Flight::view()->set('clicksOverTime', $stats['clicksOverTime']);
+		Flight::view()->set('totalClicks', Link::getTotalClicks($id));
 		Flight::view()->set('shares', self::getShares($id));
 
 		Flight::render('stats');

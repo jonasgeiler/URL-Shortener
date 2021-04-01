@@ -20,68 +20,9 @@
 	</div>
 </div>
 
-<?php if (count($clicksOverTime) !== 0): ?>
-	<div class="uk-card uk-card-small uk-card-default uk-margin">
-		<div class="uk-card-header">
-			<div class="uk-grid-small uk-flex-middle" uk-grid>
-				<div class="uk-width-auto uk-text-right">
-					<span uk-icon="history"></span>
-				</div>
-				<div class="uk-width-expand"><h4 class="uk-card-title">Clicks Over Time</h4></div>
-			</div>
-		</div>
-		<div class="uk-card-body">
-			<canvas id="click-chart"></canvas>
-		</div>
-	</div>
-<?php endif; ?>
-
 <div>
 	<ul class="uk-subnav uk-flex-center" uk-margin>
 		<li><a href="/" class="uk-link-reset uk-text-small"><span uk-icon="arrow-left"></span> Back to Home</a></li>
 	</ul>
 </div>
-<?php $this->endblock() ?>
-
-<?php $this->block('scripts') ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
-<script type="text/javascript">
-	new Chart('click-chart', {
-		type:    'bar',
-		data:    {
-			labels:   [
-				<?php
-				foreach ($clicksOverTime as $click) {
-					echo "'" . $click['month'] . "',";
-				}
-				?>
-			],
-			datasets: [
-				{
-					label:           'Clicks',
-					data:            [
-						<?php
-						foreach ($clicksOverTime as $click) {
-							echo $click['clicks'] . ',';
-						}
-						?>
-					],
-					backgroundColor: '#1e87f0'
-				}
-			]
-		},
-		options: {
-			responsive:                  true,
-			maintainAspectRatio:         false,
-			responsiveAnimationDuration: 500,
-			legend:                      {
-				display: false
-			},
-			animation:                   {
-				duration: 2000
-			}
-		}
-	});
-
-</script>
 <?php $this->endblock() ?>

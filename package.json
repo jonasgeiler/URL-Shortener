@@ -2,11 +2,13 @@
   "name": "url-shortener",
   "version": "1.0.0",
   "scripts": {
-    "build": "sass assets/scss/site.scss public/css/site.css -s compressed --no-source-map",
-    "watch": "npm run build -- --watch"
+    "build:css": "sass resources/styles/site.scss public/css/site.css -s compressed --no-source-map",
+    "build:js": "copyfiles -u 4 node_modules/uikit/dist/js/*.min.js public/js",
+    "watch": "npm run build:css -- --watch"
   },
   "devDependencies": {
-    "sass": "^1.26.5",
-    "uikit": "^3.4.2"
+    "copyfiles": "^2.4.1",
+    "sass": "^1.32.8",
+    "uikit": "3.4.2"
   }
 }

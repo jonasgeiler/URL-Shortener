@@ -153,13 +153,9 @@ class Link {
 		return ['success' => true];
 	}
 
-	// TODO: If younger than 3 months, days stats, else month stats
-	public static function getClickStats ($id) {
+	public static function getTotalClicks ($id) {
 		if (!self::checkID($id)) {
-			return [
-				'totalClicks'    => 0,
-				'clicksOverTime' => [],
-			];
+			return 0;
 		}
 
 		$result = Flight::db()->select(self::tableClicks(), 'date', [
@@ -197,16 +193,10 @@ class Link {
 				}
 			}
 
-			return [
-				'totalClicks'    => $totalClicks,
-				'clicksOverTime' => $clicksOverTime,
-			];
+			return $totalClicks;
 		}
 
-		return [
-			'totalClicks'    => 0,
-			'clicksOverTime' => [],
-		];
+		return 0;
 	}
 
 	public static function getReportedLinks () {
